@@ -95,3 +95,7 @@ Refer to the code for step 2:
     visualize_graph2d(G)   
   </code>
 </pre>
+## Other Operations
+About other operations such as persistent homology analysis. Plz check the specific file (e.g. test.ipynb) for detailed deployment.
+
+Thank you for viewing this project.
