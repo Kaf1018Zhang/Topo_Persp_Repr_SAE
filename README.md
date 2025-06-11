@@ -1,6 +1,6 @@
 # Topo_Persp_Repr_SAE
 
-
+<pre>
   <code>
     📁 Project Root
       ├── README.md                
@@ -13,3 +13,5 @@
       ├── requirements.txt        # Python dependencies
       └── test.ipynb              # Test script / visualization checks
   </code>
+</pre>
+
