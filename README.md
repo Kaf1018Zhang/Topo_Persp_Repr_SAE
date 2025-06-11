@@ -36,7 +36,7 @@ Plz refer to the requirements.txt. That would provide necessary depedencies (but
   <img src="images/struct.png" alt="Pipeline Overview: SAE + BERT" width="800"/>
 </p>
 According to the pipeline, we will run a SAE multiple times for different latent space and apply them to BERT models for classification tasks. 
-Use test.ipynb to train SAE for latent spaces. Refer to the code:
+Use test.ipynb to train SAE for latent spaces. Refer to the code (take dim=128 as an example):
 <pre>
   <code>
     X_dense = adata.X.toarray()
@@ -47,7 +47,55 @@ Use test.ipynb to train SAE for latent spaces. Refer to the code:
   </code>
 </pre>
 
-Use pipeline.ipynb to train BERT model for classfication tasks.
+Use pipeline.ipynb to train BERT model for classfication tasks (take dim=8 as an example).
+<pre>
+  <code>
+    cfg = {
+        "adata_h5": "data/Parent_NGSC3_DI_PBMC_filtered_feature_bc_matrix.h5",
+        "cluster_csv": "data/Parent_NGSC3_DI_PBMC_analysis/analysis/clustering/graphclust/clusters.csv",
+        "use_latent": True,
+        "latent_path": "latent_db/latent_8.npy",
+        "bins": 100,
+        "embed_dim": 128,
+        "layers": 4,
+        "heads": 8,
+        "dropout": 0.1,
+        "epochs": 15,
+        "batch_size": 64,
+        "lr": 1e-4,
+    }
+    model, test_acc = cr.run_experiment(cfg)
+    print("Final test acc:", test_acc)
+  </code>
+</pre>
 
 ## Discrete Morse Skeleton
-Use test.ipynb to create DMS for latent spaces.
+Use test.ipynb to create DMS for latent spaces. Refer to the code for step 1 (take dim=8 as an example):
+<pre>
+  <code>
+    X_lat = np.load("latent_db/latent_8.npy") 
+    pca = PCA(n_components=2, whiten=False, random_state=0)
+    pts2d = pca.fit_transform(X_lat)             
+    pts_min = pts2d.min(0)
+    pts_span = pts2d.max(0) - pts_min
+    pts_norm = (pts2d - pts_min) / pts_span   
+  </code>
+</pre>
+Refer to the code for step 2:
+<pre>
+  <code>
+    G = discrete_morse_graph(
+            pts_norm,
+            grid_res = 512,
+            sigma    = 1,
+            pers_len = 0.001, 
+            pers_rho = 0.0001,
+            visualize=False)
+    print(f"Skeleton: {G.number_of_nodes()} nodes, {G.number_of_edges()} edges")
+    visualize_graph2d(G)   
+  </code>
+</pre>
+## Other Operations
+About other operations such as persistent homology analysis. Plz check the specific file (e.g. test.ipynb) for detailed deployment.
+
+Thank you for viewing this project.
