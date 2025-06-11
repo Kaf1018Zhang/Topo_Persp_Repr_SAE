@@ -70,7 +70,7 @@ Use pipeline.ipynb to train BERT model for classfication tasks (take dim=8 as an
 </pre>
 
 ## Discrete Morse Skeleton
-Use test.ipynb to create DMS for latent spaces. Refer to the code for step 1:
+Use test.ipynb to create DMS for latent spaces. Refer to the code for step 1 (take dim=8 as an example):
 <pre>
   <code>
     X_lat = np.load("latent_db/latent_8.npy") 
