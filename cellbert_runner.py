@@ -1,6 +1,3 @@
-# =========================================================
-#  cellbert_runner.py  (v1.1 – with tqdm live progress)
-# =========================================================
 import os, numpy as np, pandas as pd, scanpy as sc
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -8,7 +5,6 @@ import torch, torch.nn as nn, torch.optim as optim
 from torch.utils.data import TensorDataset, DataLoader
 from tqdm.auto import tqdm
 
-# ---------- Expression → tokens ----------
 class ExpressionTokenizer:
     def __init__(self, bins: int = 7):
         self.bins = bins
@@ -20,7 +16,6 @@ class ExpressionTokenizer:
         tokens = (np.digitize(vec, thresholds) + 1).astype(np.int64)  # 1..bins
         return np.concatenate([[self.cls_id], tokens])
 
-# ---------- Tiny BERT for cells ----------
 class CellBERT(nn.Module):
     def __init__(self, num_genes, num_bins, embed_dim, layers, heads,
                  num_classes, dropout):
@@ -42,7 +37,6 @@ class CellBERT(nn.Module):
         cls = self.norm(h[:, 0, :])                      # CLS token
         return self.cls_head(cls)
 
-# ---------- helpers ----------
 def _normalize_log1p(mat: np.ndarray):
     tot = mat.sum(1, keepdims=True)
     mat = mat / (tot + 1e-9) * 1e4
@@ -53,9 +47,7 @@ def _make_loader(x, y, bs, shuffle):
                        torch.tensor(y, dtype=torch.long))
     return DataLoader(ds, batch_size=bs, shuffle=shuffle)
 
-# ---------------- main entry ----------------
 def run_experiment(cfg: dict):
-    # -------- config --------
     adata_h5     = cfg["adata_h5"]
     cluster_csv  = cfg["cluster_csv"]
     use_latent   = cfg.get("use_latent", False)
@@ -74,7 +66,6 @@ def run_experiment(cfg: dict):
     random_state = cfg.get("random_state", 42)
     device       = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # -------- data --------
     adata = sc.read_10x_h5(adata_h5)
     barcodes = adata.obs_names.tolist()
 
@@ -91,13 +82,11 @@ def run_experiment(cfg: dict):
     keep = y != -1
     X, y = X[keep], y[keep]
 
-    # split
     X_tr, X_tmp, y_tr, y_tmp = train_test_split(X, y, test_size=test_size,
                                                 stratify=y, random_state=random_state)
     X_val, X_te, y_val, y_te = train_test_split(X_tmp, y_tmp, test_size=0.5,
                                                 stratify=y_tmp, random_state=random_state)
 
-    # tokenization
     tok = ExpressionTokenizer(bins)
     def v2seq(mat):
         if not use_latent:
@@ -105,26 +94,21 @@ def run_experiment(cfg: dict):
         return np.stack([tok.encode(v) for v in mat])
     seq_tr, seq_val, seq_te = map(v2seq, (X_tr, X_val, X_te))
 
-    # label remap 0..K-1
     classes, y_tr_enc = np.unique(y_tr, return_inverse=True)
     id_map = {c:i for i,c in enumerate(classes)}
     y_val_enc = np.array([id_map[c] for c in y_val])
     y_te_enc  = np.array([id_map[c] for c in y_te])
 
-    # loaders
     train_loader = _make_loader(seq_tr, y_tr_enc, batch_size, True)
     val_loader   = _make_loader(seq_val, y_val_enc, batch_size, False)
     test_loader  = _make_loader(seq_te, y_te_enc, batch_size, False)
 
-    # model
     model = CellBERT(num_genes, bins, embed_dim, layers, heads,
                      len(classes), dropout).to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr=lr)
 
-    # -------- training loop with tqdm --------
     for ep in range(1, epochs + 1):
-        # ---- train ----
         model.train()
         pbar = tqdm(train_loader, desc=f"Epoch {ep}/{epochs}", leave=False)
         run_loss = 0.0
@@ -137,17 +121,14 @@ def run_experiment(cfg: dict):
             pbar.set_postfix(loss=f"{loss.item():.4f}")
         train_loss = run_loss / len(train_loader)
 
-        # ---- validate ----
         model.eval(); preds=[]
         with torch.no_grad():
             for xb,_ in val_loader:
                 preds += torch.argmax(model(xb.to(device)),1).cpu().tolist()
         val_acc = accuracy_score(y_val_enc, preds)
 
-        # friendly log (printed **outside** tqdm to avoid overwrite)
         tqdm.write(f"[Epoch {ep:02d}] train_loss={train_loss:.4f} | val_acc={val_acc:.4f}")
 
-    # -------- test --------
     model.eval(); preds=[]
     with torch.no_grad():
         for xb,_ in test_loader:

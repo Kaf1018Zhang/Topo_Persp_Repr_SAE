@@ -1,8 +1,3 @@
-# =====================================================================
-# dm_full.py  —  Pure-Python Discrete-Morse Skeleton  (SciPy + NetworkX)
-# ---------------------------------------------------------------------
-# 完整实现 Dey-Wang-Wang (2018) 算法；支持 ρ-持久度 & 长度双阈值简化
-# =====================================================================
 from __future__ import annotations
 import math, itertools
 from typing import Tuple, Dict
@@ -15,9 +10,6 @@ import plotly.graph_objects as go
 
 __all__ = ["discrete_morse_graph", "visualize_graph2d", "visualize_graph3d"]
 
-# ---------------------------------------------------------------------
-# 0. Normalise + Voxelise
-# ---------------------------------------------------------------------
 def _normalise(pts: np.ndarray, pad=0.05):
     mins, maxs = pts.min(0), pts.max(0); span = maxs - mins
     mins -= pad*span; maxs += pad*span; span = maxs - mins
@@ -29,9 +21,6 @@ def _voxelise(pts: np.ndarray, res: int):
     np.add.at(grid, tuple(idx.T), 1.0)
     return grid, idx
 
-# ---------------------------------------------------------------------
-# 1. KDE + simplified Forman gradient
-# ---------------------------------------------------------------------
 _OFF = {2: np.array([[1,0],[-1,0],[0,1],[0,-1]]),
         3: np.array([[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]])}
 
@@ -47,9 +36,6 @@ def _discrete_gradient(fld: np.ndarray):
         if len(higher)==1: V[idx]=higher[0]; V[higher[0]]=idx
     return V
 
-# ---------------------------------------------------------------------
-# 2. 1-stable manifold
-# ---------------------------------------------------------------------
 def _desc(p,V,M):
     path=[p]; cur=p
     while cur not in M and cur in V:
@@ -75,9 +61,6 @@ def _grid_skeleton(fld,V):
             if a!=b: G.add_edge(a,b)
     return G, fld
 
-# ---------------------------------------------------------------------
-# 3. Simplification helpers
-# ---------------------------------------------------------------------
 def _simplify_graph_len(G: nx.Graph, eps: float):
     if eps<=0: return G
     H=G.copy()
@@ -93,15 +76,12 @@ def _simplify_graph_rho(G: nx.Graph, fld: np.ndarray, eps_rho: float):
     H=G.copy()
     drop=[]
     for u,v in H.edges:
-        rho = abs(fld[u]-fld[v])   # voxel idx valid, fld in unit grid
+        rho = abs(fld[u]-fld[v]) 
         if rho<eps_rho: drop.append((u,v))
     H.remove_edges_from(drop)
     H.remove_nodes_from([n for n in H if H.degree(n)==0])
     return H
 
-# ---------------------------------------------------------------------
-# 4. Public API
-# ---------------------------------------------------------------------
 def discrete_morse_graph(points: np.ndarray, *, grid_res=256, sigma=2.0,
                          pers_len=0.0, pers_rho=0.0,
                          normalise=True, visualize=False):
@@ -117,7 +97,6 @@ def discrete_morse_graph(points: np.ndarray, *, grid_res=256, sigma=2.0,
         G.add_node(v,xyz=xyz)
     G.add_edges_from(Ggrid.edges)
 
-    # simplification
     G=_simplify_graph_len(G,pers_len)
     G=_simplify_graph_rho(G,fld,pers_rho)
 
@@ -126,9 +105,6 @@ def discrete_morse_graph(points: np.ndarray, *, grid_res=256, sigma=2.0,
         else: visualize_graph3d(G,points)
     return G
 
-# ---------------------------------------------------------------------
-# 5. Visualization
-# ---------------------------------------------------------------------
 def visualize_graph2d(G, pts=None, *, s=1, alpha=0.4, lw=1.2, c_pts='#999', c_edge='#d62728'):
     fig, ax = plt.subplots(figsize=(6, 6))
     

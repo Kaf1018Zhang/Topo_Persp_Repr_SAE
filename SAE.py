@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 
-# 1. 网络架构定义
 class SparseAutoencoder(nn.Module):
     def __init__(self, input_dim, latent_dim):
         super(SparseAutoencoder, self).__init__()
@@ -21,11 +20,9 @@ class SparseAutoencoder(nn.Module):
         recon = self.decoder(latent)
         return recon, latent
 
-# 2. 稀疏性损失函数（L1 正则）
 def sparse_loss(latent, l1_weight=1e-4):
     return l1_weight * torch.mean(torch.abs(latent))
 
-# 3. 自动设备选择
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
