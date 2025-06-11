@@ -22,8 +22,8 @@ At "Output and supplemental files", I suggest to download "Feature / cell matrix
 <p align="center">
   <table>
     <tr>
-      <td align="center"><img src="images/newplot.png" alt="t-SNE Projection of Cells Colored by Clustering" width="400"/></td>
-      <td align="center"><img src="images/newplotden.png" alt="t-SNE Projection of Cells Colored by UMI Counts" width="400"/></td>
+      <td align="center"><img src="images/newplot.png" alt="t-SNE Projection of Cells Colored by Clustering" width="500"/></td>
+      <td align="center"><img src="images/newplotden.png" alt="t-SNE Projection of Cells Colored by UMI Counts" width="500"/></td>
     </tr>
   </table>
 </p>
