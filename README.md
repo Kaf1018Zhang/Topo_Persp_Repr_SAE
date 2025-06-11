@@ -15,4 +15,5 @@
   </code>
 </pre>
 
-![Pipeline Overview: SAE + BERT](images/struct.png)
+<img src="images/struct.png" alt="Pipeline Overview: SAE + BERT" width="400"/>
+
