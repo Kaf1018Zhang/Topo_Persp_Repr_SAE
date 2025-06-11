@@ -20,7 +20,7 @@
 Before running this project, we should download the data from [Single Cell 3' Gene Expression]([https://example.com/myreport.pdf](https://www.10xgenomics.com/datasets/pbm-cs-from-a-healthy-donor-whole-transcriptome-analysis-3-1-standard-4-0-0)).
 At "Output and supplemental files", I suggest to download "Feature / cell matrix HDF5 (filtered)" and "Clustering analysis". Put them into a folder called "data" in the root (if not exist, plz create one).
 <table>
-  <tr>
+  <tr align="center">
     <td><img src="images/newplot.png" alt="t-SNE Projection of Cells Colored by Clustering" width="400"/>
     <td><img src="images/newplotden.png" alt="t-SNE Projection of Cells Colored by UMI Counts" width="400"/>
   </tr>
