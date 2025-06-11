@@ -36,7 +36,17 @@ Plz refer to the requirements.txt. That would provide necessary depedencies (but
   <img src="images/struct.png" alt="Pipeline Overview: SAE + BERT" width="800"/>
 </p>
 According to the pipeline, we will run a SAE multiple times for different latent space and apply them to BERT models for classification tasks. 
-Use test.ipynb to train SAE for latent spaces.
+Use test.ipynb to train SAE for latent spaces. Refer to the code:
+<pre>
+  <code>
+    X_dense = adata.X.toarray()
+    X_scaled = StandardScaler().fit_transform(X_dense)
+    data_tensor = torch.tensor(X_scaled, dtype=torch.float32)
+    model = SparseAutoencoder(input_dim=X_scaled.shape[1], latent_dim=128)
+    trained_model = train_sae(model, data_tensor, epochs=50, l1_weight=1e-4)
+  </code>
+</pre>
+
 Use pipeline.ipynb to train BERT model for classfication tasks.
 
 ## Discrete Morse Skeleton
