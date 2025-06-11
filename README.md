@@ -15,3 +15,4 @@
   </code>
 </pre>
 
+![Pipeline Overview: SAE + BERT](images/struct.png)
