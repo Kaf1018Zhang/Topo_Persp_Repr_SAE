@@ -15,5 +15,8 @@
   </code>
 </pre>
 
-<img src="images/struct.png" alt="Pipeline Overview: SAE + BERT" width="400"/>
+<p align="center">
+  <img src="images/struct.png" alt="Pipeline Overview: SAE + BERT" width="800"/>
+</p>
+
 
