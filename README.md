@@ -99,4 +99,16 @@ Refer to the code for step 2:
 ## Other Operations
 About other operations such as persistent homology analysis. Plz check the specific file (e.g. test.ipynb) for detailed deployment.
 
+For example, run Persistence Diagram (first 1000 samples from the original, you can replace it by other latent space): 
+<pre>
+  <code>
+    from ripser import ripser
+    from persim import plot_diagrams
+    subset = adata.X[:1000]
+    result = ripser(subset, maxdim=2)  
+    diagrams = result['dgms']
+    plot_diagrams(diagrams, show=True, title="Persistence Diagram of SAE latent space")  
+  </code>
+</pre>
+
 Thank you for viewing this project.
