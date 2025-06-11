@@ -1,0 +1,7 @@
+numpy
+matplotlib
+networkx
+scipy
+scikit-learn
+gudhi==3.6
+plotly
