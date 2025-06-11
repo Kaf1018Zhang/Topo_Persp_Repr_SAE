@@ -12,7 +12,7 @@
       ├── pipeline.ipynb          # Full pipeline demo notebook 
       ├── presentation_url.txt    # Link to presentation video (*)
       ├── requirements.txt        # Python dependencies
-      └── test.ipynb              # Test script / visualization checks
+      └── test.ipynb              # SAE / visualization checks
   </code>
 </pre>
 
@@ -36,6 +36,8 @@ Plz refer to the requirements.txt. That would provide necessary depedencies (but
   <img src="images/struct.png" alt="Pipeline Overview: SAE + BERT" width="800"/>
 </p>
 According to the pipeline, we will run a SAE multiple times for different latent space and apply them to BERT models for classification tasks. 
+Use test.ipynb to train SAE for latent spaces.
+Use pipeline.ipynb to train BERT model for classfication tasks.
 
-
-
+## Discrete Morse Skeleton
+Use test.ipynb to create DMS for latent spaces.
