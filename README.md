@@ -36,7 +36,7 @@ Plz refer to the requirements.txt. That would provide necessary depedencies (but
   <img src="images/struct.png" alt="Pipeline Overview: SAE + BERT" width="800"/>
 </p>
 According to the pipeline, we will run a SAE multiple times for different latent space and apply them to BERT models for classification tasks. 
-Use test.ipynb to train SAE for latent spaces. Refer to the code:
+Use test.ipynb to train SAE for latent spaces. Refer to the code (take dim=128 as an example):
 <pre>
   <code>
     X_dense = adata.X.toarray()
@@ -47,7 +47,7 @@ Use test.ipynb to train SAE for latent spaces. Refer to the code:
   </code>
 </pre>
 
-Use pipeline.ipynb to train BERT model for classfication tasks.
+Use pipeline.ipynb to train BERT model for classfication tasks (take dim=8 as an example).
 <pre>
   <code>
     cfg = {
